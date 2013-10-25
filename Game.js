@@ -27,11 +27,13 @@ Game = function (width, height) {
 		nextRefresh;
 	
 	init = function () {
-		var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-		window.requestAnimationFrame = requestAnimationFrame;
-		
-		//entities.push(new Player());
-		initialized = true;
+		if (!initialized) {
+			var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+			window.requestAnimationFrame = requestAnimationFrame;
+			
+			//entities.push(new Player());
+			initialized = true;
+		}
 	}
 	render = function () {
 		var entityCount = entities.length;
@@ -78,7 +80,6 @@ Game = function (width, height) {
 			render();
 			nextRefresh += 1000/FPS;
 		}
-		//window.setTimeout(function () { self.tick(); }, 1); // for fallback shitz
 		window.requestAnimationFrame(function () { self.tick(); });
 	}
 	this.run = function () {
@@ -107,7 +108,11 @@ GraphicsManager = function (l, w, h) {
 	this.drawImage = function (id, x, y) {
 		context.drawImage(loader.getImageContent(id), x, y);
 	}
-	this.drawText = function (text, x, y) {
+	this.drawText = function (text, x, y, fontSize) {
+		for (var e = text.length; e < 0; e++) {
+			var charCode = text[e];
+			context.drawImage(loader.getImageContent("font"), x + 8*e , y, 8*fontSize, 8*fontSize, charCode*8, 0, 8, 8);
+		}
 	}
 	this.clearScreen = function () {
 		context.clearRect(0, 0, width, height);
@@ -175,14 +180,19 @@ UI = function () {
 		text = "Staat de game op pauze? " + (game.getPause()  ? "Ja" : "nee");
 	}
 	this.render = function (graphicsManager) {
-		graphicsManager.drawText(text, 10, 10);
+		graphicsManager.drawText(text, 10, 10, 10);
 	}
 }
 
 World = function () {
+	var self = this;
+	
+	init = function () {
+	}
 	this.render = function (graphicsManager) {
 		graphicsManager.drawImage("map", 0, 0);
 	}
+	init();
 }
 
 Entity = function (n, l, v, a, r) {
@@ -219,7 +229,7 @@ Player = function () {
 }
 
 Loader = function (r) {
-	var self = this, resourceDirectory = r, imageContentSource = {'map': 'maps/mona.jpg'}, audioContentSource = {}, imageContent = {}, audioContent = {};
+	var self = this, resourceDirectory = r, imageContentSource = {'font': 'fonts/font.png', 'map': 'maps/mona.jpg'}, audioContentSource = {}, imageContent = {}, audioContent = {};
 	
 	init = function () {
 		self.loadImageContent(imageContentSource);
