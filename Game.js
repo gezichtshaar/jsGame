@@ -1,12 +1,12 @@
 debugg = new function (d) {
-			var debugging = d;
+	var debugging = d;
 			
-			this.log = function (loc, text) {
-				if (debugging) {
-					console.log(loc + " >>> (" + typeof(text) + "): " + text);
-				}
-			}
-		}(true);
+	this.log = function (loc, text) {
+		if (debugging) {
+			console.log(loc + " >>> (" + typeof(text) + "): " + text);
+		}
+	}
+}(true);
 
 Game = function (width, height) {
 	var self = this, 
@@ -20,13 +20,18 @@ Game = function (width, height) {
 		ui = new UI(),
 		entities = [],
 		FPS = config["fps"],
+		initialized = false,
 		running = false, 
 		pause = false, 
 		debug = true,
 		nextRefresh;
 	
 	init = function () {
+		var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+		window.requestAnimationFrame = requestAnimationFrame;
+		
 		//entities.push(new Player());
+		initialized = true;
 	}
 	render = function () {
 		var entityCount = entities.length;
@@ -74,12 +79,14 @@ Game = function (width, height) {
 			nextRefresh += 1000/FPS;
 		}
 		//window.setTimeout(function () { self.tick(); }, 1); // for fallback shitz
-		window.mozRequestAnimationFrame(function () { self.tick(); });
+		window.requestAnimationFrame(function () { self.tick(); });
 	}
 	this.run = function () {
-		running = true;
-		nextRefresh = (new Date()).getTime() + 1000/FPS
-		this.tick();
+		if (initialized) {
+			running = true;
+			nextRefresh = (new Date()).getTime() + 1000/FPS
+			this.tick();
+		}
 	}
 	init();
 }
