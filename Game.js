@@ -68,19 +68,20 @@ Game = function (width, height) {
 		pause = !pause;
 	}
 	this.tick = function () {
-		if(running) {
-			debugg.log("game.tick", inputManager.getKeyinput());
+		if (running) {
 			var now, lastUpdate;
-			do{
-				now=(new Date()).getTime();
+			debugg.log("game.tick", inputManager.getKeyinput());
+			do {
+				now = (new Date()).getTime();
 				update((now-lastUpdate)/1000);
-				lastUpdate=now;
-			}while((new Date()).getTime()*2-lastUpdate < nextRefresh);
+				lastUpdate = now;
+			} while ((new Date()).getTime()*2-lastUpdate < nextRefresh);
 				
 			render();
 			nextRefresh += 1000/FPS;
+			
+			window.requestAnimationFrame(function () { self.tick(); });
 		}
-		window.requestAnimationFrame(function () { self.tick(); });
 	}
 	this.run = function () {
 		if (initialized) {
@@ -110,7 +111,7 @@ GraphicsManager = function (l, w, h) {
 	}
 	this.drawText = function (text, x, y, fontSize) {
 		for (var e = text.length; e < 0; e++) {
-			var charCode = text[e];
+			var charCode = text[e].charCodeAt(0);
 			context.drawImage(loader.getImageContent("font"), x + 8*e , y, 8*fontSize, 8*fontSize, charCode*8, 0, 8, 8);
 		}
 	}
@@ -180,7 +181,7 @@ UI = function () {
 		text = "Staat de game op pauze? " + (game.getPause()  ? "Ja" : "nee");
 	}
 	this.render = function (graphicsManager) {
-		graphicsManager.drawText(text, 10, 10, 10);
+		graphicsManager.drawText(text, 10, 10, 2);
 	}
 }
 
@@ -229,7 +230,7 @@ Player = function () {
 }
 
 Loader = function (r) {
-	var self = this, resourceDirectory = r, imageContentSource = {'font': 'fonts/font.png', 'map': 'maps/mona.jpg'}, audioContentSource = {}, imageContent = {}, audioContent = {};
+	var self = this, resourceDirectory = r, imageContentSource = {"font": "fonts/font.png", "map": "maps/mona.jpg"}, audioContentSource = {}, imageContent = {}, audioContent = {};
 	
 	init = function () {
 		self.loadImageContent(imageContentSource);
