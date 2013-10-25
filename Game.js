@@ -105,7 +105,7 @@ GraphicsManager = function (l, w, h) {
 		return context;
 	}
 	this.drawImage = function (id, x, y) {
-		context.drawImage(loader.getContent(id), x, y);
+		context.drawImage(loader.getImageContent(id), x, y);
 	}
 	this.drawText = function (text, x, y) {
 	}
@@ -219,20 +219,35 @@ Player = function () {
 }
 
 Loader = function (r) {
-	var self = this, resourceDirectory = r, imageContentSource = {'map': 'maps/mona.jpg'}, content = {};
+	var self = this, resourceDirectory = r, imageContentSource = {'map': 'maps/mona.jpg'}, audioContentSource = {}, imageContent = {}, audioContent = {};
 	
 	init = function () {
-		for (var id in imageContentSource) {
-			content[id] = self.loadImageContent(resourceDirectory + imageContentSource[id]);
+		self.loadImageContent(imageContentSource);
+		self.loadAudioContent(audioContentSource);
+	}
+	this.loadImageContent = function (content) {
+		for (var id in content) {
+			imageContent[id] = self.loadImage(resourceDirectory + content[id]);
 		}
 	}
-	this.loadImageContent = function (url) {
-		var image = new Image();
+	this.loadAudioContent = function (content) {
+		for (var id in content) {
+			audioContent[id] = self.loadAudio(resourceDirectory + content[id]);
+		}
+	}
+	this.loadImage = function (url) {
+		var image = new Image(url);
 		image.src = url
 		return image;
 	}
-	this.getContent = function (id) {
-		return content[id];
+	this.loadAudio = function (url) {
+		return new Audio(url);
+	}
+	this.getImageContent = function (id) {
+		return imageContent[id];
+	}
+	this.getAudioContent = function (id) {
+		return audioContent[id];
 	}
 	init();
 }
