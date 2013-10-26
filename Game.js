@@ -61,8 +61,8 @@ Game = function (_width, _height) {
 	this.getPause = function () {
 		return pause;
 	}
-	this.setRunning = function (r) {
-		running = r;
+	this.switchRunning = function () {
+		running = !running;
 	}
 	this.switchPause = function () {
 		pause = !pause;
@@ -142,7 +142,7 @@ InputManager = function () {
 			this.addSingleKeyPress(this.CharToCode("p"));
 		}
 		if(this.containsKey(27)) {
-			game.setRunning(false);
+			game.switchRunning();
 		}
 	}
 	this.CharToCode = function (c) {
@@ -201,7 +201,8 @@ CollisionManager = function () {
 }
 
 UI = function () {
-	var self = this, text = "";
+	var self = this,
+		text = "";
 	
 	init = function () {
 	}
@@ -271,7 +272,7 @@ Player = function () {
 
 Loader = function (_resourceDirectory) {
 	var self = this,
-		imageContentSource = {"font": "fonts/font.png", "map": "maps/mona.jpg"},
+		imageContentSource = {"font": "fonts/font.png", "map": "maps/map_001.png"},
 		audioContentSource = {},
 		imageContent = {},
 		audioContent = {},
