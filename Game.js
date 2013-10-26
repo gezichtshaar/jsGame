@@ -25,7 +25,7 @@ Game = function (_width, _height) {
 			window.requestAnimationFrame = requestAnimationFrame;
 
 			loader = new Loader(config["resourceDirectory"]);
-			graphicsManager = new GraphicsManager(loader, width, height);
+			graphicsManager = new GraphicsManager(loader, _width, _height);
 			soundManager = new SoundManager(loader);
 			inputManager = new InputManager();
 			collisionManager = new CollisionManager();
@@ -61,8 +61,8 @@ Game = function (_width, _height) {
 	this.getPause = function () {
 		return pause;
 	}
-	this.setRunning = function (b) {
-		running = b;
+	this.setRunning = function (r) {
+		running = r;
 	}
 	this.switchPause = function () {
 		pause = !pause;
