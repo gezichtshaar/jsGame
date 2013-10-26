@@ -10,14 +10,12 @@ debugg = new function (d) {
 
 Game = function (_width, _height) {
 	var self = this, 
-		config = {"fps": 60, "resourceDirectory": "resources/"},
-		entities = [],
-		FPS = config["fps"],
+		config = {"fps": 60, "debug": true, "resourceDirectory": "resources/"},
 		initialized = false,
-		running = false, 
-		pause = false, 
-		debug = true,
-		loader, graphicsManager, soundManager, inputManager, collisionManager, ui, world, nextRefresh;
+		running = false,
+		pause = false,
+		entities = [],
+		loader, graphicsManager, soundManager, inputManager, collisionManager, ui, world, framesPerSecond, debug, nextRefresh;
 	
 	init = function (_width, _height) {
 		if (!initialized) {
@@ -31,6 +29,9 @@ Game = function (_width, _height) {
 			collisionManager = new CollisionManager();
 			ui = new UI();
 			world = new World();
+
+			framesPerSecond = config["fps"];
+			debug = config["debug"];
 			
 			//entities.push(new Player());
 			initialized = true;
@@ -78,7 +79,7 @@ Game = function (_width, _height) {
 			} while ((new Date()).getTime()*2-lastUpdate < nextRefresh);
 				
 			render();
-			nextRefresh += 1000/FPS;
+			nextRefresh += 1000/framesPerSecond;
 			
 			window.requestAnimationFrame(function () { self.tick(); });
 		}
@@ -86,7 +87,7 @@ Game = function (_width, _height) {
 	this.run = function () {
 		if (initialized) {
 			running = true;
-			nextRefresh = (new Date()).getTime() + 1000/FPS
+			nextRefresh = (new Date()).getTime() + 1000/framesPerSecond;
 			this.tick();
 		}
 	}
