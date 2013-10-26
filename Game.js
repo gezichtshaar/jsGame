@@ -10,12 +10,11 @@ debugg = new function (d) {
 
 Game = function (_width, _height) {
 	var self = this, 
-		config = {"fps": 60, "debug": true, "resourceDirectory": "resources/"},
+		config = {"fps": 60, "debug": true, "entityCount": 10, "resourceDirectory": "resources/"},
 		initialized = false,
 		running = false,
 		pause = false,
-		entities = [],
-		loader, graphicsManager, soundManager, inputManager, collisionManager, ui, world, framesPerSecond, debug, nextRefresh;
+		loader, graphicsManager, soundManager, inputManager, collisionManager, ui, world, entities, framesPerSecond, debug, nextRefresh;
 	
 	init = function (_width, _height) {
 		if (!initialized) {
@@ -29,6 +28,7 @@ Game = function (_width, _height) {
 			ui = new UI();
 			world = new World();
 
+			entities = new Array(config["entityCount"]);
 			framesPerSecond = config["fps"];
 			debug = config["debug"];
 			
@@ -117,7 +117,8 @@ GraphicsManager = function (_loader, _width, _height) {
 		context.drawImage(loader.getImageContent(id), x, y);
 	}
 	this.drawText = function (text, x, y, fontSize) {
-		for (var e = text.length; e < 0; e++) {
+		 var textLength = text.length;
+		for (var e = 0; e < textLength; e++) {
 			var charCode = text[e].charCodeAt(0);
 			context.drawImage(loader.getImageContent("font"), x + 8*e , y, 8*fontSize, 8*fontSize, charCode*8, 0, 8, 8);
 		}
@@ -198,7 +199,7 @@ CollisionManager = function () {
 		return false;
 	}
 	this.checkCollisions = function (entity, entities, dt) {
-		if (entity.isActor() && entity.isCollidable()) {
+		if (entity.isActor && entity.isCollidable {
 			var entitiesLength = entities.length;
 			while (entities--) {
 				if (entityColliding(entity, entities[entitiesLength])) {
@@ -236,34 +237,21 @@ World = function () {
 }
 
 Entity = function (_name, _actor, _collidable, _location, _velocity, _acceleration, _rotation) {
-	var self = this,
-		name, actor, collidable;
+	var self = this;
 
+	this.name = name;
+	this.isActor = _actor;
+	this.isCollidable = _collidable;
 	this.location = _location;
 	this.velocity = _velocity;
 	this.acceleration = _acceleration;
 	this.rotation = _rotation;
 	
-	init = function (_name, _actor, _collidable) {
-		name = _name;
-		actor = _actor;
-		collidable = _collidable;
-	}
-	this.isActor = function () {
-		return actor;
-	}
-	this.isCollidable = function () {
-		return collidable;
-	}
-	this.getName = function () {
-		return name;
-	}
 	this.update = function (inputManager, dt) {
 		return false;
 	}
 	this.render = function (graphicsManager) {
 	}
-	init(_name, _actor, _collidable);
 }
 
 Player = function () {
