@@ -206,7 +206,7 @@ UI = function () {
 	init = function () {
 	}
 	this.update = function (game) {
-		text = "Staat de game op pauze? " + (game.getPause()  ? "Ja" : "nee");
+		text = "Is the game paused? " + (game.getPause()  ? "Yes." : "No.");
 	}
 	this.render = function (graphicsManager) {
 		graphicsManager.drawText(text, 10, 10, 2);
