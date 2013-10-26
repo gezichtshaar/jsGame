@@ -8,7 +8,7 @@ debugg = new function (d) {
 	}
 }(true);
 
-Game = function (width, height) {
+Game = function (_width, _height) {
 	var self = this, 
 		config = {"fps": 60, "resourceDirectory": "resources/"},
 		entities = [],
@@ -19,7 +19,7 @@ Game = function (width, height) {
 		debug = true,
 		loader, graphicsManager, soundManager, inputManager, collisionManager, ui, world, nextRefresh;
 	
-	init = function (width, height) {
+	init = function (_width, _height) {
 		if (!initialized) {
 			var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 			window.requestAnimationFrame = requestAnimationFrame;
@@ -90,18 +90,18 @@ Game = function (width, height) {
 			this.tick();
 		}
 	}
-	init(width, height);
+	init(_width, _height);
 }
 
-GraphicsManager = function (l, w, h) {
+GraphicsManager = function (_loader, _width, _height) {
 	var self = this,
 		scale = 1,
 		loader, width, height, canvas, context;
 	
-	init = function (l, w, h) {
-		loader = l;
-		width = w;
-		height = h;
+	init = function (_loader, _width, _height) {
+		loader = _loader;
+		width = _width;
+		height = _height;
 
 		canvas = document.createElement("canvas");
 		canvas.width = width;
@@ -124,7 +124,7 @@ GraphicsManager = function (l, w, h) {
 	this.clearScreen = function () {
 		context.clearRect(0, 0, width, height);
 	}
-	init(l, w, h);
+	init(_loader, _width, _height);
 }
 
 InputManager = function () {
@@ -173,14 +173,14 @@ InputManager = function () {
 	init();
 }
 
-SoundManager = function (l) {
+SoundManager = function (_loader) {
 	var self = this,
 		loader;
 
-	init = function (l) {
-		loader = l;
+	init = function (_loader) {
+		loader = _loader;
 	}
-	init(l);
+	init(_loader);
 }
 
 CollisionManager = function () {
@@ -203,12 +203,15 @@ CollisionManager = function () {
 UI = function () {
 	var self = this, text = "";
 	
+	init = function () {
+	}
 	this.update = function (game) {
 		text = "Staat de game op pauze? " + (game.getPause()  ? "Ja" : "nee");
 	}
 	this.render = function (graphicsManager) {
 		graphicsManager.drawText(text, 10, 10, 2);
 	}
+	init();
 }
 
 World = function () {
@@ -222,19 +225,19 @@ World = function () {
 	init();
 }
 
-Entity = function (n, ar, c, l, v, an, r) {
+Entity = function (_name, _actor, _collidable, _location, _velocity, _acceleration, _rotation) {
 	var self = this,
 		name, actor, collidable;
 
-	this.location = l;
-	this.velocity = v;
-	this.acceleration = a;
-	this.rotation = r;
+	this.location = _location;
+	this.velocity = _velocity;
+	this.acceleration = _acceleration;
+	this.rotation = _rotation;
 	
-	init = function (n, ar, c) {
-		name = n;
-		actor = ar;
-		collidable = c;
+	init = function (_name, _actor, _collidable) {
+		name = _name;
+		actor = _actor;
+		collidable = _collidable;
 	}
 	this.isActor = function () {
 		return actor;
@@ -250,7 +253,7 @@ Entity = function (n, ar, c, l, v, an, r) {
 	}
 	this.render = function (graphicsManager) {
 	}
-	init(n, c);
+	init(_name, _actor, _collidable);
 }
 
 Player = function () {
@@ -266,7 +269,7 @@ Player = function () {
 	}
 }
 
-Loader = function (r) {
+Loader = function (_resourceDirectory) {
 	var self = this,
 		imageContentSource = {"font": "fonts/font.png", "map": "maps/mona.jpg"},
 		audioContentSource = {},
@@ -274,8 +277,8 @@ Loader = function (r) {
 		audioContent = {},
 		resourceDirectory;
 	
-	init = function (r) {
-		resourceDirectory = r;
+	init = function (_resourceDirectory) {
+		resourceDirectory = _resourceDirectory;
 		
 		self.loadImageContent(imageContentSource);
 		self.loadAudioContent(audioContentSource);
@@ -304,7 +307,7 @@ Loader = function (r) {
 	this.getAudioContent = function (id) {
 		return audioContent[id];
 	}
-	init(r);
+	init(_resourceDirectory);
 }
 
 function load () {
