@@ -19,8 +19,7 @@ Game = function (_width, _height) {
 	
 	init = function (_width, _height) {
 		if (!initialized) {
-			var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-			window.requestAnimationFrame = requestAnimationFrame;
+			requestFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
 			loader = new Loader(config["resourceDirectory"]);
 			graphicsManager = new GraphicsManager(loader, _width, _height);
@@ -59,6 +58,7 @@ Game = function (_width, _height) {
 		}
 		ui.update(self);
 	}
+	requestFrame = function (a) {}
 	this.getPause = function () {
 		return pause;
 	}
@@ -81,7 +81,7 @@ Game = function (_width, _height) {
 			render();
 			nextRefresh += 1000/framesPerSecond;
 			
-			window.requestAnimationFrame(function () { self.tick(); });
+			requestFrame(self.tick);
 		}
 	}
 	this.run = function () {
@@ -134,8 +134,16 @@ InputManager = function () {
 		singlePress = [];
 	
 	init = function () {
-		document.addEventListener("keydown", function (e) { if (!self.containsKey(e.keyCode)) {self.addKey(e.keyCode); }}, false);
-		document.addEventListener("keyup", function (e) { self.delKey(e.keyCode); }, false);
+		document.addEventListener("keydown", keydown, false);
+		document.addEventListener("keyup", keyup, false);
+	}
+	keydown = function (e) {
+		if (!self.containsKey(e.keyCode)) {
+			self.addKey(e.keyCode);
+		}
+	}
+	keyup = function (e) {
+		self.delKey(e.keyCode);
 	}
 	this.handleGameInput = function (game) {
 		if (this.singleKeypress(this.CharToCode("p"))) {
