@@ -10,11 +10,12 @@ debugg = new function (d) {
 
 Game = function (_width, _height) {
 	var self = this, 
-		config = {"fps": 60, "debug": true, "entityCount": 10, "resourceDirectory": "resources/"},
+		config = {"fps": 60, "debug": true, "resourceDirectory": "resources/"},
+		entities = [],
 		initialized = false,
 		running = false,
 		pause = false,
-		loader, graphicsManager, soundManager, inputManager, collisionManager, ui, world, entities, framesPerSecond, debug, nextRefresh;
+		loader, graphicsManager, soundManager, inputManager, collisionManager, ui, world, framesPerSecond, debug, nextRefresh;
 	
 	init = function (_width, _height) {
 		if (!initialized) {
@@ -28,7 +29,6 @@ Game = function (_width, _height) {
 			ui = new UI();
 			world = new World();
 
-			entities = new Array(config["entityCount"]);
 			framesPerSecond = config["fps"];
 			debug = config["debug"];
 			
@@ -71,12 +71,11 @@ Game = function (_width, _height) {
 	this.tick = function () {
 		if (running) {
 			var now, lastUpdate;
-			debugg.log("game.tick", inputManager.getKeyinput());
 			do {
-				now = (new Date()).getTime();
+				now = Date.now();
 				update((now-lastUpdate)/1000);
 				lastUpdate = now;
-			} while ((new Date()).getTime()*2-lastUpdate < nextRefresh);
+			} while (Date.now()*2-lastUpdate < nextRefresh);
 				
 			render();
 			nextRefresh += 1000/framesPerSecond;
@@ -87,7 +86,7 @@ Game = function (_width, _height) {
 	this.run = function () {
 		if (initialized) {
 			running = true;
-			nextRefresh = (new Date()).getTime() + 1000/framesPerSecond;
+			nextRefresh = Date.now() + 1000/framesPerSecond;
 			this.tick();
 		}
 	}
@@ -114,13 +113,16 @@ GraphicsManager = function (_loader, _width, _height) {
 		return context;
 	}
 	this.drawImage = function (id, x, y) {
-		context.drawImage(loader.getImageContent(id), x, y);
+		//context.drawImage(loader.getImageContent(id), x, y);
 	}
-	this.drawText = function (text, x, y, fontSize) {
-		 var textLength = text.length;
+	this.drawText = function (_text, x, y, fontSize) {
+		 var charList = "0123456789abcdefghijklmnopqrstuwvxyz",
+		 	text = _text.toLowerCase(),
+		 	textLength = text.length;
+
 		for (var e = 0; e < textLength; e++) {
-			var charCode = text[e].charCodeAt(0);
-			context.drawImage(loader.getImageContent("font"), x + 8*e , y, 8*fontSize, 8*fontSize, charCode*8, 0, 8, 8);
+			var charCode = charList.indexOf(text[e]);
+			context.drawImage(loader.getImageContent("font"), x + 8*e , y, 8, 8, 8*e, 0, 8, 8);
 		}
 	}
 	this.clearScreen = function () {
@@ -199,7 +201,7 @@ CollisionManager = function () {
 		return false;
 	}
 	this.checkCollisions = function (entity, entities, dt) {
-		if (entity.isActor && entity.isCollidable {
+		if (entity.isActor && entity.isCollidable) {
 			var entitiesLength = entities.length;
 			while (entities--) {
 				if (entityColliding(entity, entities[entitiesLength])) {
@@ -220,7 +222,7 @@ UI = function () {
 		text = "Is the game paused? " + (game.getPause()  ? "Yes." : "No.");
 	}
 	this.render = function (graphicsManager) {
-		graphicsManager.drawText(text, 10, 10, 2);
+		graphicsManager.drawText(text, 10, 10, 1);
 	}
 	init();
 }
@@ -255,7 +257,7 @@ Entity = function (_name, _actor, _collidable, _location, _velocity, _accelerati
 }
 
 Player = function () {
-	Entity.call(this, "Player", new Vector2(30, 30), new Vector2(0, 0), new Vector2(0, 0), 10);
+	Entity.call(this, "Player", false, false, new Vector2(30, 30), new Vector2(0, 0), new Vector2(0, 0), 10);
 	
 	this.update = function (inputManager, dt) {
 		if (inputManager.containsKeyChar("w")) {
