@@ -118,11 +118,14 @@ GraphicsManager = function (_loader, _width, _height) {
 	this.drawText = function (_text, x, y, fontSize) {
 		 var charList = "0123456789abcdefghijklmnopqrstuwvxyz?. ",
 		 	text = _text.toLowerCase(),
-		 	textLength = text.length;
+		 	textLength = text.length,
+		 	xt, yt;
 
 		for (var e = 0; e < textLength; e++) {
 			var charCode = charList.indexOf(text[e]);
-			context.drawImage(loader.getImageContent("font"), x + 8*e , y, 8, 8, 8*e, 0, 8, 8);
+			xt = charCode%32;
+			yt = 30 * (charCode >> 5);
+			context.drawImage(loader.getImageContent("font"), xt*8 , yt*8, 8, 8, x+8*e, y, 8, 8);
 		}
 	}
 	this.clearScreen = function () {
