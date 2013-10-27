@@ -116,15 +116,16 @@ GraphicsManager = function (_loader, _width, _height) {
 		//context.drawImage(loader.getImageContent(id), x, y);
 	}
 	this.drawText = function (_text, x, y, fontSize) {
-		 var charList = "0123456789abcdefghijklmnopqrstuwvxyz?. ",
-		 	text = _text.toLowerCase(),
+		 var charList = "ABCDEFGHIJKLMNOPQRSTUWVXYZ      " +
+		 				"0123456789.,!?'\":;()+-=*/\\%   ",
+		 	text = _text.toUpperCase(),
 		 	textLength = text.length,
 		 	xt, yt;
 
 		for (var e = 0; e < textLength; e++) {
 			var charCode = charList.indexOf(text[e]);
 			xt = charCode%32;
-			yt = 30 * (charCode >> 5);
+			yt = (charCode >> 5);
 			context.drawImage(loader.getImageContent("font"), xt*8 , yt*8, 8, 8, x+8*e, y, 8, 8);
 		}
 	}
