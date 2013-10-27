@@ -113,7 +113,7 @@ GraphicsManager = function (_loader, _width, _height) {
 		return context;
 	}
 	this.drawImage = function (id, x, y) {
-		//context.drawImage(loader.getImageContent(id), x, y);
+		context.drawImage(loader.getImageContent(id), x, y);
 	}
 	this.drawText = function (_text, x, y, fontSize) {
 		 var charList = "ABCDEFGHIJKLMNOPQRSTUWVXYZ      " +
@@ -226,7 +226,7 @@ UI = function () {
 		text = "Is the game paused? " + (game.getPause()  ? "Yes." : "No.");
 	}
 	this.render = function (graphicsManager) {
-		graphicsManager.drawText(text, 10, 10, 1);
+		graphicsManager.drawText(text, 8, 8, 1);
 	}
 	init();
 }
@@ -315,6 +315,6 @@ Loader = function (_resourceDirectory) {
 }
 
 function load () {
-	var game = new Game(500, 500);
+	var game = new Game(512, 512);
 	game.run();
 }
