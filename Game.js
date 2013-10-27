@@ -116,7 +116,7 @@ GraphicsManager = function (_loader, _width, _height) {
 		//context.drawImage(loader.getImageContent(id), x, y);
 	}
 	this.drawText = function (_text, x, y, fontSize) {
-		 var charList = "0123456789abcdefghijklmnopqrstuwvxyz",
+		 var charList = "0123456789abcdefghijklmnopqrstuwvxyz?. ",
 		 	text = _text.toLowerCase(),
 		 	textLength = text.length;
 
@@ -257,7 +257,7 @@ Entity = function (_name, _actor, _collidable, _location, _velocity, _accelerati
 }
 
 Player = function () {
-	Entity.call(this, "Player", false, false, new Vector2(30, 30), new Vector2(0, 0), new Vector2(0, 0), 10);
+	Entity.call(this, "Player", false, false, new $Math.Vector2(30, 30), new $Math.Vector2(0, 0), new $Math.Vector2(0, 0), 10);
 	
 	this.update = function (inputManager, dt) {
 		if (inputManager.containsKeyChar("w")) {
