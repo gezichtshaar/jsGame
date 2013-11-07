@@ -118,8 +118,9 @@ GraphicsManager = function (_loader, _width, _height) {
 	this.getContext = function () {
 		return context;
 	}
-	this.drawImage = function (id, x, y) {
-		context.drawImage(loader.getImageContent(id), x - currentCamera.coords.x, y - currentCamera.coords.y);
+	this.drawImage = function (id, x, y, width, height) {
+		var image = loader.getImageContent(id);
+		context.drawImage(image, 0, 0, image.width, image.height, (x - currentCamera.coords.x) * currentCamera.scale, (y - currentCamera.coords.y) * currentCamera.scale, width * currentCamera.scale, height * currentCamera.scale);
 	}
 	this.drawText = function (_text, x, y, fontSize) {
 		 var charList = "ABCDEFGHIJKLMNOPQRSTUWVXYZ      " +
@@ -129,10 +130,11 @@ GraphicsManager = function (_loader, _width, _height) {
 		 	xt, yt;
 
 		for (var e = 0; e < textLength; e++) {
-			var charCode = charList.indexOf(text[e]);
-			xt = charCode%32;
-			yt = (charCode >> 5);
-			context.drawImage(loader.getImageContent("font"), xt*8 , yt*8, 8, 8, x+8*e, y, 8, 8);
+			var charCode = charList.indexOf(text[e]),
+				xt = charCode%32,
+				yt = (charCode >> 5),
+				tileSize = 8 * currentCamera.scale;
+			context.drawImage(loader.getImageContent("font"), xt*8 , yt*8, 8, 8, x+tileSize*e, y, tileSize, tileSize);
 		}
 	}
 	this.clearScreen = function () {
@@ -324,7 +326,7 @@ Loader = function (_resourceDirectory) {
 		}
 	}
 	this.loadImage = function (url) {
-		var image = new Image(url);
+		var image = new Image();
 		image.src = url
 		return image;
 	}
