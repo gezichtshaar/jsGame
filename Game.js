@@ -33,17 +33,23 @@ Game = function (_width, _height) {
 			debug = config["debug"];
 			
 			//entities.push(new Player());
+			graphicsManager.addCamera(new Camera(0, 0, _width, _height, new $Math.Vector2(0, 0), 1));
 			initialized = true;
 		}
 	}
 	render = function () {
-		var entityCount = entities.length;
+		var entityCount = entities.length,
+			cameraCount = graphicsManager.cameras.length;
+
 		graphicsManager.clearScreen();
-		world.render(graphicsManager);
-		while (entityCount--) {
-			entities[entityCount].render(graphicsManager);
+		while (cameraCount--) {
+			graphicsManager.currentCamera = graphicsManager.cameras[cameraCount];
+			world.render(graphicsManager);
+			while (entityCount--) {
+				entities[entityCount].render(graphicsManager);
+			}
+			ui.render(graphicsManager);
 		}
-		ui.render(graphicsManager);
 	}
 	update = function (dt) {
 		inputManager.handleGameInput(self);
@@ -95,8 +101,8 @@ Game = function (_width, _height) {
 
 GraphicsManager = function (_loader, _width, _height) {
 	var self = this,
-		scale = 1,
-		loader, width, height, canvas, context;
+		cameras = [],
+		loader, width, height, canvas, context, currentCamera;
 	
 	init = function (_loader, _width, _height) {
 		loader = _loader;
@@ -113,7 +119,7 @@ GraphicsManager = function (_loader, _width, _height) {
 		return context;
 	}
 	this.drawImage = function (id, x, y) {
-		context.drawImage(loader.getImageContent(id), x, y);
+		context.drawImage(loader.getImageContent(id), x - currentCamera.coords.x, y - currentCamera.coords.y);
 	}
 	this.drawText = function (_text, x, y, fontSize) {
 		 var charList = "ABCDEFGHIJKLMNOPQRSTUWVXYZ      " +
@@ -131,6 +137,9 @@ GraphicsManager = function (_loader, _width, _height) {
 	}
 	this.clearScreen = function () {
 		context.clearRect(0, 0, width, height);
+	}
+	this.addCamera = function (camera) {
+		cameras.push(camera);
 	}
 	init(_loader, _width, _height);
 }
@@ -242,6 +251,21 @@ World = function () {
 	init();
 }
 
+Camera = function(_top, _left, _width, _height, _coords, _scale) {
+	this.top = _top;
+	this.left = _left;
+	this.width = _width;
+	this.height = _height;
+	this.coords =  _coords;
+	this.scale = _scale;
+}
+
+Camera.prototype = {
+	this.setCoords = function (coords) {
+		this.coords = coords;
+	}
+}
+
 Entity = function (_name, _actor, _collidable, _location, _velocity, _acceleration, _rotation) {
 	var self = this;
 
@@ -260,16 +284,18 @@ Entity = function (_name, _actor, _collidable, _location, _velocity, _accelerati
 	}
 }
 
-Player = function () {
+Player = function (_camera) {
 	Entity.call(this, "Player", false, false, new $Math.Vector2(30, 30), new $Math.Vector2(0, 0), new $Math.Vector2(0, 0), 10);
-	
+	this.camera = _camera;
+}
+Player.prototype = {
 	this.update = function (inputManager, dt) {
 		if (inputManager.containsKeyChar("w")) {
 			acceleration.y += 10*dt;
 		}
-		
 		//velocity.addVec(acceleration);
 		//location.addVec(velocity.dot(acceleration).multiply(dt));
+		this.camera.setCoords(this.location);
 	}
 }
 
