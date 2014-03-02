@@ -98,7 +98,7 @@ GraphicsManager = function (_width, _height) {
 InputManager = function () {
 	return {
 		keyPress: function (key) {
-			return true;
+			return false;
 		}
 	};
 }
@@ -116,7 +116,7 @@ MenuScreen = function () {
 
 	init = function () {
 		buttons.push(new Button("Start", 50, 50, startGame));
-		buttons.push(new Button("Options", 50, 60, startGame));
+		buttons.push(new Button("Options", 50, 55, startGame));
 	}
 	startGame = function () {
 		console.log("start");
@@ -137,20 +137,23 @@ MenuScreen = function () {
 	return state;
 }
 
-Button = function (_text, _top, _left, _callback) {
+Button = function (_text, _left, _top, _callback) {
 	var text = _text,
 		top = _top,
 		left = _left,
-		callback = _callback;
+		callback = _callback,
+		selected = false;
 
 	return {
 		update: function (input, dt) {
 			if (input.keyPress("a")) {
 				callback();
+			} else if (input.keyPress("d")) {
+				selected = !selected;
 			}
 		},
 		render: function (graphics) {
-			graphics.drawText(text, top, left);
+			graphics.drawText(text, (selected ? left + 5: left), top);
 		}
 	}
 }
