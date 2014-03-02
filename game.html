@@ -1,8 +1,14 @@
 <html>
-	<head>
+	<head>		
+		<script type="text/javascript">
+			var loader = new Array();
+			window.onload = function () {
+				loader.forEach(function (element) { element(); });
+			}
+		</script>
 		<script type="text/javascript" src="./lib/Math.js"></script>
 		<script type="text/javascript" src="./Game.js"></script>
 	</head>
-	<body  onload="load();">
+	<body>
 	</body>
 </html>
