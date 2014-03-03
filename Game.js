@@ -30,7 +30,7 @@ GameManager = function (_location, _width, _height) {
 			graphicsManager = new GraphicsManager(width, height);
 			location.appendChild(graphicsManager.canvas);
 
-			inputManager = new InputManager();
+			inputManager = new InputManager(location);
 
 			gamestate.push(new MenuScreen());
 
@@ -95,7 +95,19 @@ GraphicsManager = function (_width, _height) {
 	};
 }
 
-InputManager = function () {
+InputManager = function (_location) {
+	var location = _location,
+		keys = [],
+		mouse = [];
+
+	init = function () {
+		location.addEventListener("keydown", onKeydown);
+		location.addEventListener("keyup", onKeyup);
+		location.addEventListener("mousedown", onMousedown);
+		location.addEventListener("mouseup", onMouseup);
+	}
+
+	init();
 	return {
 		keyPress: function (key) {
 			return false;
